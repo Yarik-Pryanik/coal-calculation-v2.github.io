@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import date
-from backend.database import get_db
-from backend import models, schemas
+from database import get_db
+import models
+import schemas
 
 router = APIRouter(prefix="/boiler", tags=["boiler"])
 
@@ -109,5 +110,6 @@ def get_boiler_by_date(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Данные за дату {date} для котлов не найдены"
         )
+
 
     return boiler_operation
