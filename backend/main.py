@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from database import engine, Base
 import models
 from routers.coal import router as coal_router
@@ -22,10 +24,10 @@ app = FastAPI(
 # Добавляем CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Разрешаем все домены
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Разрешаем все методы
-    allow_headers=["*"],  # Разрешаем все заголовки
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Подключаем роутеры
@@ -33,14 +35,17 @@ app.include_router(coal_router)
 app.include_router(boiler_router)
 app.include_router(calculations_router)
 
+# Отдаем фронтенд для корневого пути
 @app.get("/")
-def read_root():
-    return {"message": "Coal Calculation API is running!"}
+def serve_frontend():
+    return FileResponse('frontend/index.html')
 
+# Health check
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "API is running"}
 
+# Тестовый endpoint
 @app.get("/test")
 def test_endpoint():
     return {"test": "OK", "database": "working"}
@@ -51,3 +56,4 @@ if __name__ == "__main__":
     print("Документация: http://localhost:8000/docs")
 
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
