@@ -6,7 +6,5 @@ services:
     buildCommand: |
       pip install -r requirements.txt
       cd backend && python -c "from database import engine, Base; import models; Base.metadata.create_all(bind=engine)"
+      cp -r ../frontend/* ./
     startCommand: cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
