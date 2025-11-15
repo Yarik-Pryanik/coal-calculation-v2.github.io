@@ -1,10 +1,14 @@
-FROM python:3.11.9-slim
+FROM python:3.11-slim
 
-COPY requirements.txt requirements.txt
+WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
+COPY . .
 
-COPY backend .
+# Создаем базу данных при запуске
+RUN cd backend && python -c "from database import engine, Base; import models; Base.metadata.create_all(bind=engine)"
 
-CMD ["python", "main.py"]
+# Запускаем приложение
+CMD cd backend && uvicorn main:app --host 0.0.0.0 --port 8080
